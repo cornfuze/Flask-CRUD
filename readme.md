@@ -18,3 +18,51 @@ Aplikasi CRUD sederhana berbasis Flask untuk manajemen Barang dan Transaksi, dil
    ```sh
    git clone https://github.com/cornfuze/Flask-CRUD.git
    cd Flask-CRUD
+
+2. **Buat virtual environment & install dependencies**
+   ```sh
+   python -m venv .venv
+   .venv\Scripts\activate  # Windows
+   pip install flask flask_sqlalchemy flask_login werkzeug
+   ```
+
+3. **Jalankan aplikasi**
+   ```sh
+   python app.py
+   ```
+
+4. **Akses di browser**
+   ```
+   http://localhost:5000
+   ```
+
+## Struktur Folder
+
+```
+├── app.py
+├── models.py
+├── test_app.py
+├── templates/
+│   ├── base.html.j2
+│   ├── home.html
+│   ├── login.html
+│   ├── register.html
+│   ├── barang/
+│   │   └── list.html
+│   └── transaksi/
+│       └── list.html
+├── .gitignore
+├── readme.md
+```
+
+## Pengujian
+
+Jalankan unit test:
+```sh
+python test_app.py
+```
+
+## Catatan
+
+- File database (`database.db`) otomatis dibuat saat pertama kali dijalankan.
+- File dan folder seperti `.venv/`, `__pycache__/`, dan file database sudah diabaikan oleh `.gitignore`.

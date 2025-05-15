@@ -1,0 +1,135 @@
+
+{% extends 'base.html.j2' %}
+{% block title %}Daftar Transaksi{% endblock %}
+{% block content %}
+<h2>Daftar Transaksi</h2>
+<button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#modalFormTransaksi">
+Tambah Transaksi
+</button>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Kode</th>
+            <th>Barang</th>
+            <th>Jumlah</th>
+            <th>Total</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for t in transaksi %}
+        <tr>
+            <td>{{ t.kode_transaksi }}</td>
+            <td>{{ t.barang.nama_barang }}</td>
+            <td>{{ t.jumlah_barang }}</td>
+            <td>{{ t.total_harga | rupiah }}</td>
+            <td>
+                <a href="#" 
+                class="btn btn-warning btn-sm me-2 btn-edit-transaksi"
+                data-bs-toggle="modal"
+                data-bs-target="#modalFormEditTransaksi"
+                data-id="{{ t.kode_transaksi }}"
+                data-barang="{{ t.kode_barang }}"
+                data-jumlah="{{ t.jumlah_barang }}">
+                Edit
+                </a>
+                <a href="{{ url_for('hapus_transaksi', id=t.kode_transaksi) }}" class="btn btn-danger btn-sm btn-delete" data-url="{{ url_for('hapus_transaksi', id=t.kode_transaksi) }}">Hapus</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="pagination mt-3">
+    {% if transaksi.has_prev %}
+        <a href="{{ url_for('list_transaksi', page=transaksi.prev_num) }}" class="btn btn-sm btn-outline-primary">Prev</a>
+    {% endif %}
+    {% if transaksi.has_next %}
+        <a href="{{ url_for('list_transaksi', page=transaksi.next_num) }}" class="btn btn-sm btn-outline-primary">Next</a>
+    {% endif %}
+</div>
+
+<!-- Modal Tambah Transaksi -->
+<div class="modal fade" id="modalFormTransaksi" tabindex="-1" aria-labelledby="modalFormTransaksiLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="{{ url_for('tambah_transaksi') }}">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalFormTransaksiLabel">Tambah Transaksi</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Barang</label>
+            <select name="kode_barang" class="form-select" required>
+              <option value="">-- Pilih Barang --</option>
+              {% for b in barang_list %}
+                <option value="{{ b.kode_barang }}">{{ b.nama_barang }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Jumlah</label>
+            <input type="number" name="jumlah_barang" class="form-control" min="1" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+          <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Edit Transaksi -->
+<div class="modal fade" id="modalFormEditTransaksi" tabindex="-1" aria-labelledby="modalFormEditTransaksiLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" id="formEditTransaksi">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalFormEditTransaksiLabel">Edit Transaksi</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="kode_transaksi" id="editKodeTransaksi">
+          <div class="mb-3">
+            <label class="form-label">Barang</label>
+            <select name="kode_barang" id="editKodeBarang" class="form-select" required>
+              <option value="">-- Pilih Barang --</option>
+              {% for b in barang_list %}
+                <option value="{{ b.kode_barang }}">{{ b.nama_barang }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Jumlah</label>
+            <input type="number" name="jumlah_barang" id="editJumlahBarang" class="form-control" min="1" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+          <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  var editButtons = document.querySelectorAll('.btn-edit-transaksi');
+  var formEdit = document.getElementById('formEditTransaksi');
+  editButtons.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var id = this.getAttribute('data-id');
+      var barang = this.getAttribute('data-barang');
+      var jumlah = this.getAttribute('data-jumlah');
+      document.getElementById('editKodeTransaksi').value = id;
+      document.getElementById('editKodeBarang').value = barang;
+      document.getElementById('editJumlahBarang').value = jumlah;
+      formEdit.action = "/transaksi/edit/" + id;
+    });
+  });
+</script>
+
+{% endblock %}

@@ -1,0 +1,124 @@
+{% extends 'base.html.j2' %}
+{% block title %}Daftar Barang{% endblock %}
+{% block content %}
+<h2>Daftar Barang</h2>
+<!-- Tombol Tambah -->
+<button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#modalFormBarang">
+Tambah Barang
+</button>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Kode</th>
+            <th>Nama</th>
+            <th>Harga</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for b in barang %}
+        <tr>
+            <td>{{ b.kode_barang }}</td>
+            <td>{{ b.nama_barang }}</td>
+            <td>{{ b.harga_barang | rupiah }}</td>
+            <td>
+                <button 
+                class="btn btn-warning btn-sm btn-edit-barang"
+                data-bs-toggle="modal"
+                data-bs-target="#modalFormEditBarang"
+                data-id="{{ b.kode_barang }}"
+                data-nama="{{ b.nama_barang }}"
+                data-harga="{{ b.harga_barang }}">
+                Edit
+            </button>
+                <a href="{{ url_for('hapus_barang', id=b.kode_barang) }}" class="btn btn-danger btn-sm btn-delete" data-url="{{ url_for('hapus_barang', id=b.kode_barang) }}">Hapus</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div class="pagination mt-3">
+    {% if barang.has_prev %}
+        <a href="{{ url_for('list_barang', page=barang.prev_num) }}" class="btn btn-sm btn-outline-primary">Prev</a>
+    {% endif %}
+    {% if barang.has_next %}
+        <a href="{{ url_for('list_barang', page=barang.next_num) }}" class="btn btn-sm btn-outline-primary">Next</a>
+    {% endif %}
+</div>
+
+<!-- Modal Tambah -->
+<div class="modal fade" id="modalFormBarang" tabindex="-1" aria-labelledby="modalFormBarangLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="{{ url_for('tambah_barang') }}">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalFormBarangLabel">Tambah Barang</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="nama" class="form-label">Nama Barang</label>
+            <input type="text" class="form-control" name="nama_barang" required>
+          </div>
+          <div class="mb-3">
+            <label for="harga" class="form-label">Harga</label>
+            <input type="number" class="form-control" name="harga_barang" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+          <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Edit Barang -->
+<div class="modal fade" id="modalFormEditBarang" tabindex="-1" aria-labelledby="modalFormEditBarangLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" id="formEditBarang">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalFormEditBarangLabel">Edit Barang</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="kode_barang" id="editKodeBarang">
+          <div class="mb-3">
+            <label class="form-label">Nama Barang</label>
+            <input type="text" name="nama_barang" id="editNamaBarang" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Harga Barang</label>
+            <input type="number" name="harga_barang" id="editHargaBarang" class="form-control" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          <button type="submit" class="btn btn-success">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var editButtons = document.querySelectorAll('.btn-edit-barang');
+    var formEdit = document.getElementById('formEditBarang');
+    editButtons.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var id = this.getAttribute('data-id');
+            var nama = this.getAttribute('data-nama');
+            var harga = this.getAttribute('data-harga');
+            document.getElementById('editKodeBarang').value = id;
+            document.getElementById('editNamaBarang').value = nama;
+            document.getElementById('editHargaBarang').value = harga;
+            formEdit.action = "/barang/edit/" + id;
+        });
+    });
+});
+</script>
+{% endblock %}

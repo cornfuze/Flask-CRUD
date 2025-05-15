@@ -1,0 +1,26 @@
+{% extends 'base.html.j2' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+    <p>Selamat datang di aplikasi CRUD!</p>
+<div class="row mt-3">
+  <div class="col-md-3">
+    <div class="card text-white bg-primary mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Jumlah Barang</h5>
+        <p class="card-text fs-4">{{ total_barang }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-white bg-success mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Total Transaksi</h5>
+        <p class="card-text fs-4">{{ total_transaksi }}</p>
+      </div>
+    </div>
+  </div>
+  <p class="text-muted">Login Sebagai: <strong>{{ current_user.username }}</strong></p>
+</div>
+{% endblock %}
+
+
